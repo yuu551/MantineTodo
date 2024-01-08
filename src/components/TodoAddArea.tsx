@@ -19,6 +19,7 @@ import { Indicator } from "@mantine/core";
 import { useState } from "react";
 import { Category } from "../types/Todo";
 import { Categories } from "../utils/constants";
+import { useForm } from "@mantine/form";
 
 const SelectOption = ({ value, color }: Category) => {
   return (
@@ -30,6 +31,15 @@ const SelectOption = ({ value, color }: Category) => {
 };
 
 export function TodoAddArea() {
+  const form = useForm({
+    initialValues: {
+      content: "",
+      status: "in_progress",
+      deadline: "",
+      userId: 1,
+      category: "",
+    },
+  });
   const [opened, { open, close }] = useDisclosure(false);
   const combobox = useCombobox({
     onDropdownClose: () => combobox.resetSelectedOption(),
@@ -43,6 +53,11 @@ export function TodoAddArea() {
       <SelectOption {...item} />
     </Combobox.Option>
   ));
+
+  const formOnSubmit = (values: any) => {
+    console.log(values);
+    close();
+  };
 
   return (
     <Container size={"md"} mt={30}>
@@ -64,62 +79,65 @@ export function TodoAddArea() {
         size={600}
         title={<Text fw={"bold"}>タスク追加</Text>}
       >
-        <TextInput placeholder="タスク名" radius="xl" variant="unstyled" />
-        <DateTimePicker
-          mt={3}
-          placeholder="期限"
-          radius="xl"
-          variant="unstyled"
-          valueFormat="YYYY/MM/DD HH:mm"
-        />
-        <Divider my="xs" />
-        <Group justify="space-between">
-          {/** <Select
-            placeholder="カテゴリ"
+        <form onSubmit={form.onSubmit((values) => formOnSubmit(values))}>
+          <TextInput
+            placeholder="タスク名"
             radius="xl"
             variant="unstyled"
-            w={300}
-            data={["家事", "仕事", "その他"]}
-          />*/}
+            {...form.getInputProps("content")}
+          />
+          <DateTimePicker
+            mt={3}
+            placeholder="期限"
+            radius="xl"
+            variant="unstyled"
+            valueFormat="YYYY/MM/DD HH:mm"
+            {...form.getInputProps("deadline")}
+          />
+          <Divider my="xs" />
+          <Group justify="space-between">
+            <Combobox
+              store={combobox}
+              onOptionSubmit={(val) => {
+                setValue(val);
+                form.setFieldValue("category", val);
+                combobox.closeDropdown();
+              }}
+            >
+              <Combobox.Target>
+                <InputBase
+                  component="button"
+                  type="button"
+                  pointer
+                  onClick={() => combobox.toggleDropdown()}
+                  rightSectionPointerEvents="none"
+                  multiline
+                  variant="unstyled"
+                  w={300}
+                >
+                  {selectedOption ? (
+                    <SelectOption {...selectedOption} />
+                  ) : (
+                    <Input.Placeholder>カテゴリ</Input.Placeholder>
+                  )}
+                </InputBase>
+              </Combobox.Target>
 
-          <Combobox
-            store={combobox}
-            onOptionSubmit={(val) => {
-              setValue(val);
-              combobox.closeDropdown();
-            }}
-          >
-            <Combobox.Target>
-              <InputBase
-                component="button"
-                type="button"
-                pointer
-                onClick={() => combobox.toggleDropdown()}
-                rightSectionPointerEvents="none"
-                multiline
-                variant="unstyled"
-                w={300}
-              >
-                {selectedOption ? (
-                  <SelectOption {...selectedOption} />
-                ) : (
-                  <Input.Placeholder>カテゴリ</Input.Placeholder>
-                )}
-              </InputBase>
-            </Combobox.Target>
+              <Combobox.Dropdown>
+                <Combobox.Options>{options}</Combobox.Options>
+              </Combobox.Dropdown>
+            </Combobox>
 
-            <Combobox.Dropdown>
-              <Combobox.Options>{options}</Combobox.Options>
-            </Combobox.Dropdown>
-          </Combobox>
-
-          <Group style={{ flexDirection: "row-reverse" }}>
-            <Button size="xs">タスクを追加</Button>
-            <Button size="xs" color="gray">
-              キャンセル
-            </Button>
+            <Group style={{ flexDirection: "row-reverse" }}>
+              <Button size="xs" type="submit">
+                タスクを追加
+              </Button>
+              <Button size="xs" color="gray" onClick={close}>
+                キャンセル
+              </Button>
+            </Group>
           </Group>
-        </Group>
+        </form>
       </Modal>
     </Container>
   );
