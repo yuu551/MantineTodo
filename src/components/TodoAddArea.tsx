@@ -17,17 +17,8 @@ import { useDisclosure } from "@mantine/hooks";
 import { IconPlus } from "@tabler/icons-react";
 import { Indicator } from "@mantine/core";
 import { useState } from "react";
-
-type Category = {
-  value: string;
-  color: string;
-};
-
-const Categories: Category[] = [
-  { value: "家事", color: "lime" },
-  { value: "仕事", color: "grape" },
-  { value: "その他", color: "gray" },
-];
+import { Category } from "../types/Todo";
+import { Categories } from "../utils/constants";
 
 const SelectOption = ({ value, color }: Category) => {
   return (

@@ -4,14 +4,7 @@ import axios from "axios";
 import { Select, ComboboxItem } from "@mantine/core";
 import { DateTimePicker, DateValue } from "@mantine/dates";
 import { TodoCard } from "./TodoCard";
-
-type Todo = {
-  id: number;
-  content: string;
-  status: string;
-  deadline: string;
-  userId: number;
-};
+import { Todo } from "../types/Todo";
 
 export function TodoTable() {
   //Todoのデータ
@@ -28,33 +21,9 @@ export function TodoTable() {
 
   return (
     <Container size="md">
-      {/*
-                <Table miw={700}>
-        <Table.Thead>
-          <Table.Tr>
-            <Table.Th>やること</Table.Th>
-            <Table.Th>ステータス</Table.Th>
-            <Table.Th>期日</Table.Th>
-          </Table.Tr>
-        </Table.Thead>
-        <Table.Tbody>
-          {todoData?.map((row) => {
-            return (
-              <Table.Tr key={row.id}>
-                <Table.Td>{row.content}</Table.Td>
-                <Table.Td>
-                  <TableSelect rowData={row} />
-                </Table.Td>
-                <Table.Td>
-                  <TableDateTime rowData={row} />
-                </Table.Td>
-              </Table.Tr>
-            );
-          })}
-        </Table.Tbody>
-      </Table>
-            */}
-      <TodoCard />
+      {todoData?.map((todo) => {
+        return <TodoCard todo={todo} key={todo.id}/>;
+      })}
     </Container>
   );
 }
